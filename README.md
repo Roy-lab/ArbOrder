@@ -40,4 +40,9 @@ mkdir -p ExampleOut/feature_assign_2_3
 ## Compile 
 Use Cmake to compile 
 
-cmake --build ArbOrder/cmake-build-debug --target feature_assigner 
+```bash
+mkdir build 
+cd build 
+cmake .. 
+cmake --build . 
+```
