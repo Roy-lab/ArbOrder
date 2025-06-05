@@ -409,7 +409,7 @@ void ArbAssignments::writeClusterAssign(string outdir)
 	int init_assign;
 	int reorder_assign;
 
-	for (int i = 0; m_cluster.size(); i++)
+	for (int i = 0; i < m_cluster.size(); i++)
 	{
 		cluster = m_cluster[i];
 		outfile1 = outdir + '/' + cluster + "_clusterassign.txt";
@@ -430,6 +430,9 @@ void ArbAssignments::writeClusterAssign(string outdir)
 			fout1 << m_Best  << '_' << feature << "\t" << reorder_assign << endl;
 			fout2 << cluster << '_' << feature << "\t" << reorder_assign << endl;
 		}
+
+		fout1.close();
+		fout2.close();
 	}
 }
 
