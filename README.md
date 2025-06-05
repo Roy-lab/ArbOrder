@@ -32,5 +32,12 @@ That is if  min_k = 3, and k = 5. Features will be assigned to a cluster if the 
 
 #### Example Usage 
 
+```bash
 mkdir -p ExampleOut/feature_assign_2_3 
 ./feature_assigner ExampleIn ExampleIn/tree.txt 2 3 ExampleOut
+```
+
+## Compile 
+Use Cmake to compile 
+
+cmake --build ArbOrder/cmake-build-debug --target feature_assigner 
