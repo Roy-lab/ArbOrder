@@ -28,9 +28,6 @@ public:
 private:
 	int m_K;
 	vector<vector<double>> m_Matrix;
-
-	
-
 };
 
 

@@ -265,6 +265,13 @@ ArbAssignments::read_mean_value(string filename)
 }
 
 int
+ArbAssignments::setBest(string best)
+{
+	m_Best = best;
+	return 0;
+}
+
+int
 ArbAssignments::getclusterIndex(const string & name)
 {
 	vector<string>::iterator iter;
@@ -389,6 +396,41 @@ void ArbAssignments::writeSortedClusterMeans(string outfile)
 		}
 	}
 	fout.close();
+}
+
+void ArbAssignments::writeClusterAssign(string outdir)
+{
+	string cluster;
+	string feature;
+
+	string outfile1;
+	string outfile2;
+
+	int init_assign;
+	int reorder_assign;
+
+	for (int i = 0; m_cluster.size(); i++)
+	{
+		cluster = m_cluster[i];
+		outfile1 = outdir + '/' + cluster + "_clusterassign.txt";
+		outfile2 = outdir + '/' + cluster + "_speciesspecnames_clusterassign.txt";
+
+		ofstream fout1(outfile1);
+		ofstream fout2(outfile2);
+
+		fout1 << "Gene\t" << cluster << endl;
+		fout2 << "Gene\t" << cluster << endl;
+
+		for (int j = 0; j < m_feature.size(); j++)
+		{
+			feature = m_feature[j];
+			init_assign = m_arb_assignment_map[j]->at(i);
+			reorder_assign = (*get_reorder_map(i))[init_assign];
+
+			fout1 << m_Best  << '_' << feature << "\t" << reorder_assign << endl;
+			fout2 << cluster << '_' << feature << "\t" << reorder_assign << endl;
+		}
+	}
 }
 
 

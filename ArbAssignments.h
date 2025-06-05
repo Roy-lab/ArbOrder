@@ -25,6 +25,8 @@ class ArbAssignments {
 
 	int read_mean_value(string filename);
 
+	int setBest(string best);
+
 	int assign_features(int min_k, int max_k);
 	int getclusterIndex(const string & name);
 	map<int, int>* get_reorder_map(int idx);
@@ -33,11 +35,7 @@ class ArbAssignments {
 	void writeMappedFeatureAssign(string outfile);
 	void writeMappingFiles(string outdir);
 	void writeSortedClusterMeans(string outfile);
-
-
-
-
-
+	void writeClusterAssign(string outdir);
 
 	private:
 	map<int, vector<int>*> m_arb_assignment_map;
@@ -47,6 +45,7 @@ class ArbAssignments {
 	map<int, map<int, double>*> m_cluster_means;
 	map<int, map<int, int>*> m_cluster_reordering;
 	multimap<int, int> m_arb_assignment;
+	string m_Best;
 };
 
 
