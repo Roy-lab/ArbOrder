@@ -235,8 +235,8 @@ Graph::reorderProbabilityMatrices(ArbAssignments & arb_assignments)
 			parent_idx = arb_assignments.getclusterIndex(parent_name);
 			node_idx = arb_assignments.getclusterIndex(node_name);
 
-			parent_reorder = arb_assignments.get_reorder_map(parent_idx);
-			node_reorder = arb_assignments.get_reorder_map(node_idx);
+			parent_reorder = arb_assignments.getReorderMap(parent_idx);
+			node_reorder = arb_assignments.getReorderMap(node_idx);
 
 			matrix = node->getTransitionMatrix();
 
@@ -253,7 +253,7 @@ Graph::reorderProbabilityMatrices(ArbAssignments & arb_assignments)
 		{
 			node_name = node->getName();
 			node_idx = arb_assignments.getclusterIndex(node_name);
-			node_reorder = arb_assignments.get_reorder_map(node_idx);
+			node_reorder = arb_assignments.getReorderMap(node_idx);
 			node->reorderInitProb(node_reorder);
 		}
 	}

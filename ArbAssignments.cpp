@@ -254,6 +254,8 @@ ArbAssignments::read_mean_value(string filename)
 
 		// generate reordering map
 		map<int, int>* handle_reorder = new map<int, int>;
+		(*handle_reorder)[-1] = -1;
+		(*handle_reorder)[-2] = -2;
 		for (int i = 0; i < keys.size(); ++i)
 		{
 			(*handle_reorder)[keys[sorted_idx[i]]] = i ;
@@ -291,7 +293,7 @@ ArbAssignments::getclusterIndex(const string & name)
 
 
 map<int, int>*
-ArbAssignments::get_reorder_map(int idx)
+ArbAssignments::getReorderMap(int idx)
 {
 	if (m_cluster_reordering.find(idx) == m_cluster_reordering.end())
 	{
@@ -331,7 +333,7 @@ ArbAssignments::writeMappedFeatureAssign(string outfile)
 		for (int j = 0; j < m_cluster.size(); j++)
 		{
 			init_assign = m_arb_assignment_map[i]->at(j);
-			reorder_assign = (*get_reorder_map(j))[init_assign];
+			reorder_assign = (*getReorderMap(j))[init_assign];
 			ss << "\t" << reorder_assign;
 		}
 		ss << endl;
@@ -354,7 +356,7 @@ void ArbAssignments::writeMappingFiles(string outdir)
 		}
 
 		fout << "Init\tReorder" << endl;
-		map<int, int>* handle = get_reorder_map(i);
+		map<int, int>* handle = getReorderMap(i);
 		for (auto &pair: *handle)
 		{
 			fout << pair.first << "\t" << pair.second << endl;
@@ -425,7 +427,7 @@ void ArbAssignments::writeClusterAssign(string outdir)
 		{
 			feature = m_feature[j];
 			init_assign = m_arb_assignment_map[j]->at(i);
-			reorder_assign = (*get_reorder_map(i))[init_assign];
+			reorder_assign = (*getReorderMap(i))[init_assign];
 
 			fout1 << m_Best  << '_' << feature << "\t" << reorder_assign << endl;
 			fout2 << cluster << '_' << feature << "\t" << reorder_assign << endl;
@@ -434,6 +436,98 @@ void ArbAssignments::writeClusterAssign(string outdir)
 		fout1.close();
 		fout2.close();
 	}
+}
+
+
+/**
+ * @brief Reads and orders expression values into a multimap, splitting groups by "Dummy" lines.
+ * 
+ * The file is expected to have the following format:
+ * Gene    Value
+ * C2_Sobic.001G001300  0.029983
+ * "Dummy" lines signify a new group, incrementing the group index in the multimap.
+ * 
+ * @param filename The path to the file containing expression values.
+ * @return 0 on success, -1 on failure.
+ */
+int ArbAssignments::reorderExpressionValues(string filename, string cluster, string outfile) {
+	ifstream infile(filename);
+	if (!infile.is_open()) {
+		cerr << "Error: Could not open file " << filename << endl;
+		return -1; // File could not be opened
+	}
+
+	string line;
+	multimap<int, pair<string, double>> temp_expression_map; // Temporary structure
+	int group_index = 0; // Start group index at zero
+	getline(infile, line); // skip header
+	while (getline(infile, line)) {
+		stringstream ss(line);
+		string gene;
+		string second_col;
+
+		// Read the gene name and second column as string first
+		if (!(ss >> gene >> second_col)) {
+			cerr << "Warning: Skipping invalid line: " << line << endl;
+			continue;
+		}
+
+		if (gene.substr(0, 5) == "Dummy" || second_col == "-100") {
+			group_index++; // Increment group index on encountering "Dummy"
+			continue;
+		}
+
+
+		double value;
+		try {
+			value = stod(second_col);
+		} catch (const exception &e) {
+			cerr << "Warning: Could not parse value for gene " << gene << ": " << second_col << endl;
+			continue;
+		}
+		// Add the gene and value to the multimap
+		temp_expression_map.insert(make_pair(group_index, make_pair(gene, value)));
+	}
+
+	infile.close();
+
+	// Debug/logging output
+	//cout << "Successfully read and grouped expression values." << endl;
+	//cout << "Number of groups: " << (group_index) << endl;
+
+	// Process the temporary map into m_cluster_reordering here (if required)
+	int cluster_idx = getclusterIndex(cluster);
+	map<int, int> *reorder_map = getReorderMap(cluster_idx);
+	map<int, int> inverted_map;
+
+	for (auto &map_item: *reorder_map)
+	{
+		inverted_map[map_item.second] = map_item.first;
+	}
+
+	ofstream fout(outfile);
+	if (!fout.is_open()) {
+		cerr << "Error: Could not open file " << outfile << endl;
+		return -1; // File could not be opened
+	}
+	fout << "Gene\tCol1" << endl;
+	for (auto &i_map_item:inverted_map)
+	{
+		int key_cluster = i_map_item.first;
+		int exp_cluster = i_map_item.second;
+		if (exp_cluster >= 0)
+		{
+			for (auto exp_iter = temp_expression_map.lower_bound(exp_cluster); exp_iter !=  temp_expression_map.upper_bound(exp_cluster); exp_iter++)
+			{
+				pair<string, double> exp_val = exp_iter->second;
+				fout << exp_val.first << "\t" << exp_val.second << endl;
+			}
+			fout << "Dummy" <<key_cluster << "\t" << -100 << endl;
+		}
+	}
+	fout.close();
+	return 0;
+
 }
 
 

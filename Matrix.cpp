@@ -66,13 +66,18 @@ void Matrix::reorderRows(const std::map<int, int>* rowPerm) {
 	if (rowPerm == nullptr) {
 		throw std::invalid_argument("Permutation map pointer cannot be null");
 	}
-	if (rowPerm->size() != m_K) {
+	if (rowPerm->size() != m_K && rowPerm->size() != m_K+2) // Include -1 and -2
+	{
 		throw std::out_of_range("Permutation map size must match the number of rows");
 	}
 	std::vector<std::vector<double>> tempMatrix = m_Matrix;
 	for (auto const& [oldIdx, newIdx] : *rowPerm) {
 		if (oldIdx >= m_K || newIdx >= m_K) {
 			throw std::out_of_range("Row index in permutation map is out of range");
+		}
+		if (oldIdx < 0 || newIdx < 0)
+		{
+			continue;
 		}
 		tempMatrix[newIdx] = m_Matrix[oldIdx];
 	}
@@ -85,7 +90,8 @@ void Matrix::reorderCols(const std::map<int, int>* colPerm) {
 		throw std::invalid_argument("Permutation map pointer cannot be null");
 	}
 
-	if (colPerm->size() != m_K) {
+	if (colPerm->size() != m_K && colPerm->size() != m_K+2) //Include -1, and -2
+	{
 		throw std::out_of_range("Permutation map size must match the number of columns");
 	}
 
@@ -96,6 +102,10 @@ void Matrix::reorderCols(const std::map<int, int>* colPerm) {
 		for (auto const& [oldIdx, newIdx] : *colPerm) {
 			if (oldIdx >= m_K || newIdx >= m_K) {
 				throw std::out_of_range("Column index in permutation map is out of range");
+			}
+			if (oldIdx < 0 || newIdx < 0)
+			{
+				continue;
 			}
 			// Copy column oldIdx into newIdx for the current row
 			tempMatrix[row][newIdx] = m_Matrix[row][oldIdx];

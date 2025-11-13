@@ -29,13 +29,19 @@ class ArbAssignments {
 
 	int assign_features(int min_k, int max_k);
 	int getclusterIndex(const string & name);
-	map<int, int>* get_reorder_map(int idx);
+	map<int, int>* getReorderMap(int idx);
+	vector<string>* getClusterSet()
+	{
+		return &m_cluster;
+	}
 
 	int write_assignment(string outdir);
 	void writeMappedFeatureAssign(string outfile);
 	void writeMappingFiles(string outdir);
 	void writeSortedClusterMeans(string outfile);
 	void writeClusterAssign(string outdir);
+
+	int reorderExpressionValues(string filename, string cluster, string outdir);
 
 	private:
 	map<int, vector<int>*> m_arb_assignment_map;
