@@ -38,11 +38,15 @@ mkdir -p ExampleOut/feature_assign_2_3
 ```
 
 ## Compile 
-Use Cmake to compile 
+Use Cmake  or make to compile 
 
 ```bash
 mkdir build 
 cd build 
 cmake .. 
 cmake --build . 
+```
+
+```
+make 
 ```
