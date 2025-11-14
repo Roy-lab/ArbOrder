@@ -34,11 +34,7 @@ representing the various cluster means.  I did not want to have to actively thin
 That is if  min_k = 3, and k = 5. Features will be assigned to a cluster if the value is 2-4 in the allcell_types table. 
 
 #### Example Usage 
-
-```bash
-mkdir -p ExampleOut/feature_assign_2_3 
-./feature_assigner ExampleIn ExampleIn/tree.txt 2 3 ExampleOut
-```
+There are example usage for this function in 
 
 ## Compile 
 Use Cmake to compile 
