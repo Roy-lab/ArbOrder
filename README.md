@@ -31,10 +31,10 @@ allcelltypes_clusterassign_lca_brk.txt utilizes zero indexing. That is for 5 clu
 
 representing the various cluster means.  I did not want to have to actively think about zero indexing when assigning clusters and just wanted to use the k option.  
 
-That is if  min_k = 3, and k = 5. Features will be assigned to a cluster if the value is 2-4 in the allcell_types table. 
+That is if min_k = 3, and k = 5. Features will be assigned to a cluster if the value is 2-4 in the allcell_types table. 
 
 #### Example Usage 
-There are example usage for this function in 
+There are example usage for this function in `run_example.sh`
 
 ## Compile 
 Use Cmake or make to compile 
