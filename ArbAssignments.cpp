@@ -440,7 +440,7 @@ void ArbAssignments::writeClusterAssign(string outdir)
 			feature = m_feature[j];
 			init_assign = m_arb_assignment_map[j]->at(i);
 			reorder_assign = (*getReorderMap(i))[init_assign];
-			if (reorder_assign < 0) // Skip unassigned or missing!
+			if (reorder_assign >= 0) // Skip unassigned or missing!
 			{
 				fout1 << m_Best  << '_' << feature << "\t" << reorder_assign << endl;
 				fout2 << cluster << '_' << feature << "\t" << reorder_assign << endl;
@@ -642,7 +642,7 @@ int ArbAssignments::reorderExpression()
 			old_assign = m_arb_assignment_map[j]->at(i);
 			new_assign = (*getReorderMap(i))[old_assign];
 			exp = m_expression[gene]->at(cluster);
-			if (new_assign > 0)
+			if (new_assign >= 0)
 			{
 				cluster_assigns->insert(make_pair(new_assign, make_pair(gene, exp)));
 			}
@@ -678,6 +678,7 @@ int ArbAssignments::writeReorderedExpression(string outdir)
 			}
 			fout << "Dummy" << i << "\t" << -100 << endl;
 		}
+		fout.close();
 	}
 	return 0;
 }
