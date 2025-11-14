@@ -23,6 +23,12 @@ ArbAssignments::~ArbAssignments()
 		delete pair.second;
 	}
 	m_expression.clear();
+
+	for(auto &pair: m_reordered_expression)
+	{
+		delete pair.second;
+	}
+	m_reordered_expression.clear();
 }
 
 int
@@ -562,10 +568,21 @@ int ArbAssignments::fixUnassignedFeatures()
 		feature_idx = feature_pair.first;
 		assign_vec = feature_pair.second;
 
+		bool update = false;
 		for (int i=0; i < assign_vec->size(); ++i)
 		{
 			assign = (*assign_vec)[i];
 			if (assign < 0)
+			{
+				update = true;
+				cout << "Feature " << m_feature[feature_idx] << " was poorly assigned. Performing reassignment for all clusters." << endl;
+				break;
+			}
+
+		}
+		if (update)
+		{
+			for (int i = 0; i < assign_vec->size(); ++i)
 			{
 				feature = m_feature[feature_idx];
 				cluster = m_cluster[i];
@@ -573,7 +590,7 @@ int ArbAssignments::fixUnassignedFeatures()
 
 				cluster_means = m_cluster_means[i];
 				min_dist = std::numeric_limits<double>::max();
-				for (pair <int, double> p: *cluster_means)
+				for (pair<int, double> p: *cluster_means)
 				{
 					dist = abs(exp - p.second);
 					if (dist < min_dist)
@@ -581,7 +598,6 @@ int ArbAssignments::fixUnassignedFeatures()
 						min_dist = dist;
 						nearest_cluster = p.first;
 					}
-
 				}
 				(*assign_vec)[i] = nearest_cluster;
 			}
