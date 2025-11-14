@@ -1,0 +1,14 @@
+C8	prepCluster/changa_k5/C8_clusterassign.txt	prepMatrix/extmean_C8.txt
+C5	prepCluster/changa_k5/C5_clusterassign.txt	prepMatrix/extmean_C5.txt
+C14	prepCluster/changa_k5/C14_clusterassign.txt	prepMatrix/extmean_C14.txt
+C10	prepCluster/changa_k5/C10_clusterassign.txt	prepMatrix/extmean_C10.txt
+C7	prepCluster/changa_k5/C7_clusterassign.txt	prepMatrix/extmean_C7.txt
+C4	prepCluster/changa_k5/C4_clusterassign.txt	prepMatrix/extmean_C4.txt
+C15	prepCluster/changa_k5/C15_clusterassign.txt	prepMatrix/extmean_C15.txt
+C9	prepCluster/changa_k5/C9_clusterassign.txt	prepMatrix/extmean_C9.txt
+C12	prepCluster/changa_k5/C12_clusterassign.txt	prepMatrix/extmean_C12.txt
+C2	prepCluster/changa_k5/C2_clusterassign.txt	prepMatrix/extmean_C2.txt
+C1	prepCluster/changa_k5/C1_clusterassign.txt	prepMatrix/extmean_C1.txt
+C13	prepCluster/changa_k5/C13_clusterassign.txt	prepMatrix/extmean_C13.txt
+C6	prepCluster/changa_k5/C6_clusterassign.txt	prepMatrix/extmean_C6.txt
+C11	prepCluster/changa_k5/C11_clusterassign.txt	prepMatrix/extmean_C11.txt

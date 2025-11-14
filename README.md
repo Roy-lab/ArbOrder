@@ -5,16 +5,19 @@ This is a c++ function that is used to reorder all arboretum or escarole output 
 ## Usage
 
 ```bash
-./feature_assigner <arb_output_dir> <tree_file> <min_k> <k> <outdir>
+arbAssigner <arb_output_dir> <config_file> <tree_file> <min_k> <k> <best> <fix_unassigned[0/1]> <outdir> 
+arbAssigner <arb_output_dir> <config_file> <tree_file> <k> <best> <fix_unassigned[0/1]> <outdir>" 
 ```
 
-| Argument         | Description                                                                                                               |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `arb_output_dir` | Directory containing `allcelltypes_clusterassign_lca_brk.txt`, `clustermeans.txt`, and transition matrices (`<Cluster>`). |
-| `tree_file`      | The input tree provided to **Arboretum** or **Escarole**.                                                                 |
-| `min_k`          | The minimum category (k value) to assign to a cluster.                                                                    |
-| `k`              | The number of clusters.                                                                                                   |
-| `outdir`         | Output directory where results will be saved.                                                                             |
+| Argument            | Description                                                                                                               |
+|---------------------| ------------------------------------------------------------------------------------------------------------------------- |
+| `arb_output_dir`    | Directory containing `allcelltypes_clusterassign_lca_brk.txt`, `clustermeans.txt`, and transition matrices (`<Cluster>`). |
+| `config_file`       | The input config file to arboretum or escarole. This is used to load in mean expression data so that full path should be specified for that column |
+| `tree_file`         | The input tree provided to **Arboretum** or **Escarole**.                                                                 |
+| `min_k`  (optional) | The minimum category (k value) to assign to a cluster.                                                                    |
+| `k`                 | The number of clusters.                                                                                                   |
+| `fix_unassigned`    | This is a boolean input. If set to 1, unassigned genes will be assigned to the cluster with the nearest gene expression.  | 
+| `outdir`            | Output directory where results will be saved.                                                                             |
 
 
 #### A Note on Indexing 

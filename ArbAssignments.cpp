@@ -17,6 +17,12 @@ ArbAssignments::~ArbAssignments()
 		delete pair.second;
 	}
 	m_cluster_means.clear();
+
+	for (auto &pair: m_expression)
+	{
+		delete pair.second;
+	}
+	m_expression.clear();
 }
 
 int
@@ -273,6 +279,12 @@ ArbAssignments::setBest(string best)
 	return 0;
 }
 
+int ArbAssignments::setK(int k)
+{
+	m_k = k;
+	return 0;
+}
+
 int
 ArbAssignments::getclusterIndex(const string & name)
 {
@@ -428,9 +440,11 @@ void ArbAssignments::writeClusterAssign(string outdir)
 			feature = m_feature[j];
 			init_assign = m_arb_assignment_map[j]->at(i);
 			reorder_assign = (*getReorderMap(i))[init_assign];
-
-			fout1 << m_Best  << '_' << feature << "\t" << reorder_assign << endl;
-			fout2 << cluster << '_' << feature << "\t" << reorder_assign << endl;
+			if (reorder_assign < 0) // Skip unassigned or missing!
+			{
+				fout1 << m_Best  << '_' << feature << "\t" << reorder_assign << endl;
+				fout2 << cluster << '_' << feature << "\t" << reorder_assign << endl;
+			}
 		}
 
 		fout1.close();
@@ -529,5 +543,148 @@ int ArbAssignments::reorderExpressionValues(string filename, string cluster, str
 	return 0;
 
 }
+
+int ArbAssignments::fixUnassignedFeatures()
+{
+	string feature;
+	string cluster;
+	vector<int>* assign_vec;
+	map<int, double>* cluster_means;
+	int feature_idx;
+	int assign;
+	double exp;
+	double dist;
+	double min_dist;
+	int nearest_cluster;
+
+	for (auto &feature_pair:m_arb_assignment_map)
+	{
+		feature_idx = feature_pair.first;
+		assign_vec = feature_pair.second;
+
+		for (int i=0; i < assign_vec->size(); ++i)
+		{
+			assign = (*assign_vec)[i];
+			if (assign < 0)
+			{
+				feature = m_feature[feature_idx];
+				cluster = m_cluster[i];
+				exp = m_expression[feature]->at(cluster);
+
+				cluster_means = m_cluster_means[i];
+				min_dist = std::numeric_limits<double>::max();
+				for (pair <int, double> p: *cluster_means)
+				{
+					dist = abs(exp - p.second);
+					if (dist < min_dist)
+					{
+						min_dist = dist;
+						nearest_cluster = p.first;
+					}
+
+				}
+				(*assign_vec)[i] = nearest_cluster;
+			}
+		}
+	}
+	return 0;
+}
+
+
+int ArbAssignments::readInputExpression(string filename, string cluster)
+{
+	ifstream infile(filename);
+	if (!infile.is_open())
+	{
+		cerr << "Error: Could not open file " << filename << endl;
+	}
+
+	string line;
+	stringstream instream;
+	string gene;
+	double exp;
+	while (getline(infile, line))
+	{
+		instream.clear();
+		instream.str(line);
+		instream >> gene >> exp;
+
+		gene = gene.substr(gene.find('_') + 1);
+
+		if (m_expression.find(gene) == m_expression.end())
+		{
+			m_expression[gene] = new map<string, double>;
+		}
+		(*m_expression[gene])[cluster] = exp;
+	}
+	return 0;
+}
+
+
+int ArbAssignments::reorderExpression()
+{
+	string gene;
+	string cluster;
+	int old_assign;
+	int new_assign;
+	double exp;
+	for (int i=0; i < m_cluster.size(); i ++)
+	{
+		cluster = m_cluster[i];
+		if (m_reordered_expression.find(cluster) == m_reordered_expression.end())
+		{
+			m_reordered_expression[cluster] = new multimap<int, pair<string, double>>;
+		}
+		multimap<int,pair<string, double>>* cluster_assigns = m_reordered_expression[cluster];
+		for (int j=0; j < m_feature.size(); j++)
+		{
+			gene = m_feature[j];
+			old_assign = m_arb_assignment_map[j]->at(i);
+			new_assign = (*getReorderMap(i))[old_assign];
+			exp = m_expression[gene]->at(cluster);
+			if (new_assign > 0)
+			{
+				cluster_assigns->insert(make_pair(new_assign, make_pair(gene, exp)));
+			}
+		}
+	}
+	return 0;
+}
+
+int ArbAssignments::writeReorderedExpression(string outdir)
+{
+	string filename;
+	ofstream fout;
+	for (string cluster: m_cluster)
+	{
+		filename = outdir + "/" + cluster + "_exprtab.txt";
+		fout.open(filename);
+		if (!fout.is_open())
+		{
+			cerr << "Error: Could not open file " << filename << " for writing." <<endl;
+			return -1;
+		}
+		fout << "Gene\tCol1" << endl;
+		multimap<int, pair<string, double>>* cluster_multi_map = m_reordered_expression[cluster];
+		for (int i = 0; i < m_k; i++)
+		{
+			auto iter = cluster_multi_map->lower_bound(i);
+			auto end = cluster_multi_map->upper_bound(i);
+			while (iter != end)
+			{
+				pair<string, double> exp_val = iter->second;
+				fout << exp_val.first << "\t" << exp_val.second << endl;
+				iter++;
+			}
+			fout << "Dummy" << i << "\t" << -100 << endl;
+		}
+	}
+	return 0;
+}
+
+
+
+
+
 
 
