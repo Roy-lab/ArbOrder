@@ -37,11 +37,14 @@ That is if  min_k = 3, and k = 5. Features will be assigned to a cluster if the 
 There are example usage for this function in 
 
 ## Compile 
-Use Cmake to compile 
+Use Cmake or make to compile 
 
 ```bash
 mkdir build 
 cd build 
 cmake .. 
 cmake --build . 
+```
+```bash 
+make
 ```
