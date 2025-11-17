@@ -689,7 +689,7 @@ int ArbAssignments::writeReorderedExpression(string outdir)
 			while (iter != end)
 			{
 				pair<string, double> exp_val = iter->second;
-				fout << exp_val.first << "\t" << exp_val.second << endl;
+				fout << cluster <<  "_" << exp_val.first << "\t" << exp_val.second << endl;
 				iter++;
 			}
 			fout << "Dummy" << i << "\t" << -100 << endl;
